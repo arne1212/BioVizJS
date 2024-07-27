@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="conical_gradient.css">
+    <title>My HTML Page</title>
+</head>
+<body>
+    <h1>Hello, world!</h1>
+    
+    <div id="someDiv" style="background-color: rgb(255, 98, 0); width: 100px; height: 100px;"></div>
+
+    <script type="module" src="./index.js"></script>
+    <!-- <script type="module">
+        console.log("inside script");
+        import { TestVis } from "./index.js";
+
+        const vis = new TestVis("someDiv");
+    </script> -->
+    <script type="module">
+        console.log("inside script");
+        import { HeartRateGaugeVisualization } from "./index.js";
+
+        const vis = new HeartRateGaugeVisualization("someDiv", {
+            referenceValue: 60,
+            valueVisible: true,
+            minValue: 50,
+            maxValue: 80,
+            colors: [
+                {color: "red", deg: 0},
+                {color: "yellow", deg: 10},
+                {color: "green", deg: 20}
+            ]
+        });
+
+        vis.update(75);
+
+        // setInterval(() => {
+        // const heartRate = Math.floor(Math.random() * 130) + 50; // Generate a random heart rate value between 50 and 180
+        // vis.update(heartRate);
+        // }, 1000);
+    </script>
+
+    <div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120">
+            <text x="10" y="70" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#333" stroke="#0066cc" stroke-width="">BioVizJS</text>
+            <text x="110" y="70" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#0066cc">Viz</text>            
+            <!-- Wellenlinie als Unterstreichung -->
+            <path d="M10 90 Q75 70, 140 90 T270 70" stroke="#0066cc" stroke-width="3" fill="none"/>
+            
+            <!-- Datenpunkte auf der Wellenlinie -->
+            <circle cx="10" cy="90" r="3" fill="#0066cc"/>
+            <circle cx="75" cy="80" r="3" fill="#0066cc"/>
+            <circle cx="140" cy="90" r="3" fill="#0066cc"/>
+            <circle cx="205" cy="95" r="3" fill="#0066cc"/>
+            <circle cx="270" cy="70" r="3" fill="#0066cc"/>
+          </svg>
+    </div>
+    
+</body>
+</html>
