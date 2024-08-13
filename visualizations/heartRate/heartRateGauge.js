@@ -1,4 +1,6 @@
 import { HeartRateVisualization } from "./heartRateVisualization.js";
+import { isValidColor } from "../utility.js";
+import { noValidColorErrorMessage } from "../utility.js";
 
 /**
  * Gauge to visualize heart rate values
@@ -15,13 +17,34 @@ export class HeartRateGaugeVisualization extends HeartRateVisualization {
     constructor(containerId, options = {}) {
         super(containerId, options);
 
+        this.validateAndSetOptions(options);
+
+        this.draw();
+    }
+
+    validateAndSetOptions(options) {
         const defaultMinVal = 40;
         const defaultMaxVal = 180;
         
-        this.minVal = options.minValue || defaultMinVal;
-        this.maxVal = options.maxValue || defaultMaxVal;
-        this.referenceVal = options.referenceValue || null;
-        this.colors = options.colors || null;
+        this.colors = 'colors' in options ? options.colors : null;
+
+        if ('minValue' in options) {
+            if (typeof options.minValue !== 'number' || options.minValue < 0) {
+                throw new Error('minValue must be a number that is at least 0');
+            }
+            this.minVal = options.minValue 
+        } else {
+            this.minVal = defaultMinVal
+        }
+
+        if ('maxValue' in options) {
+            if (typeof options.minValue !== 'number' || options.maxValue < 1) {
+                throw new Error('maxValue must be a number that is at least 1');
+            }
+            this.maxVal = options.maxValue 
+        } else {
+            this.maxVal = defaultMaxVal
+        }
 
         if (this.minVal > this.maxVal) {
             var errorMessage = `Minimum value ${this.minVal} must not be larger than maximum value ${this.maxVal}. Minimum value is set to default=${defaultMinVal} and maximum value to default=${defaultMaxVal}`;
@@ -34,7 +57,6 @@ export class HeartRateGaugeVisualization extends HeartRateVisualization {
             this.referenceVal = null;
             console.error(errorMessage);
         }
-        this.draw();
     }
 
     /**
@@ -107,41 +129,16 @@ export class HeartRateGaugeVisualization extends HeartRateVisualization {
             <text id="maxVal" x="83" y="55" font-size="0.8em" text-anchor="middle" fill="${svgBaseColor}" stroke="none">${this.maxVal}</text>
         </svg>
         `;
-        this.container.innerHTML = svgCode;
+        // get safe reference to the svg element of the instance to avoid naming conflicts with other DOM elements
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = svgCode;
+        const newSvg = tempDiv.firstElementChild;
+        this.svgElement = newSvg;
+        this.container.appendChild(newSvg);
 
         if (this.referenceVal) {
             this.setReferenceLine(this.referenceVal, this.minVal, this.maxVal);
         }
-    }
-
-    /**
-     * Determines wheter black of white provides more contrast considering the containers color
-     * @returns black or white depending on what provides better contrast
-     */
-    getSVGBaseColor() {
-        var containerColor = this.container.style.backgroundColor;
-        var containerColor = getComputedStyle(this.container).backgroundColor;
-        var colorBrightness = this.getColorBrightness(containerColor);
-        // bright colors will result in black being used for certain svg elements
-        var svgBaseColor = colorBrightness > 0.25 ? 'black' : 'white';
-        return svgBaseColor
-    }
-
-    /**
-     * Determines the brightness of a given color in rgb format
-     * @param {string} rgbColor the color which brightness to determine in rgb format 
-     * @returns value between in [0, 1] representing the colors brightness
-     */
-    getColorBrightness(rgbColor) {
-        let r, g, b;
-
-        const match = rgbColor.match(/(\d+),\s*(\d+),\s*(\d+)/);
-        r = parseInt(match[1]);
-        g = parseInt(match[2]);
-        b = parseInt(match[3]);
-        
-        // formula to calculate color brightness from https://www.w3.org/TR/AERT/#color-contrast
-        return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     }
 
     /**
@@ -159,9 +156,12 @@ export class HeartRateGaugeVisualization extends HeartRateVisualization {
             var gradientString = "";
             for (let color of this.colors) {
                 if(color.color == undefined || color.deg == undefined) {
-                    throw new Error();
+                    throw new Error(`${color} needs to be a dictionary with the keys color and deg`);
                 }
                 let currentColor = color.color;
+                if (!isValidColor(currentColor)) {
+                    throw new Error(noValidColorErrorMessage(currentColor));
+                }
                 let currentDeg = color.deg;
                 gradientString += "," + currentColor + " " + currentDeg + "deg";
             }
@@ -181,17 +181,26 @@ export class HeartRateGaugeVisualization extends HeartRateVisualization {
      * @param {number} maxHeartRate object attribute for the max heart rate to display
      */
     setReferenceLine(referenceLineVal, minHeartRate, maxHeartRate) {
-        const referenceLineElement = document.getElementById("referenceLine");
-        const fillPercentage = (referenceLineVal - minHeartRate) / (maxHeartRate - minHeartRate);
-        const referenceLineAngle = fillPercentage * 180 - 90;
-        referenceLineElement.setAttribute('transform', `rotate(${referenceLineAngle} 50 50)`);
+        if (this.svgElement) {
+            const referenceLine = this.svgElement.querySelector('#referenceLine');
+            if (referenceLine) {
+                const fillPercentage = (referenceLineVal - minHeartRate) / (maxHeartRate - minHeartRate);
+                const referenceLineAngle = fillPercentage * 180 - 90;
+                referenceLine.setAttribute('transform', `rotate(${referenceLineAngle} 50 50)`);
+            }
+        }        
     }
 
     /**
+     * @override
      * updates the gauge visualization to display a new value
      * @param {number} heartRate heart rate value to visualize
      */
     update(heartRate) {
+        if (!this.svgElement) {
+            return;
+        }
+
         // keep heart rate display in the defined range
         if (heartRate > this.maxVal) {
             heartRate = this.maxVal;
@@ -201,20 +210,26 @@ export class HeartRateGaugeVisualization extends HeartRateVisualization {
         }
         // adjust the masking of the gauge by adjusting the dashoffset revealing more or less of the gradient depending on the heart rate value
         const fillPercentage = (heartRate - this.minVal) / (this.maxVal - this.minVal);
-        const gaugeMask = document.getElementById("gauge-mask");
-        const maskLength = gaugeMask.getTotalLength();
-        const fillLength = maskLength * fillPercentage;
-        const dashOffset = fillLength;
-        gaugeMask.style.strokeDashoffset = dashOffset;
-
+        const gaugeMask = this.svgElement.querySelector("#gauge-mask");
+        if (gaugeMask) {
+            const maskLength = gaugeMask.getTotalLength();
+            const fillLength = maskLength * fillPercentage;
+            const dashOffset = fillLength;
+            gaugeMask.style.strokeDashoffset = dashOffset;
+        }
+        
         // rotate the needle
-        const gaugeNeedle = document.getElementById("gauge-needle");
-        const needleAngle = fillPercentage * 180;
-        gaugeNeedle.style.transformOrigin = '50px 50px';
-        gaugeNeedle.style.transform = `rotate(${needleAngle}deg)`;
-
+        const gaugeNeedle = this.svgElement.querySelector("#gauge-needle");
+        if (gaugeNeedle) {
+            const needleAngle = fillPercentage * 180;
+            gaugeNeedle.style.transformOrigin = '50px 50px';
+            gaugeNeedle.style.transform = `rotate(${needleAngle}deg)`;
+        }
+        
         // update the displayed value
-        const currentValue = document.getElementById('currentVal');
-        currentValue.textContent = heartRate;
+        const currentValue = this.svgElement.querySelector('#currentVal');
+        if (currentValue) {
+            currentValue.textContent = heartRate;
+        }      
     }
 }
