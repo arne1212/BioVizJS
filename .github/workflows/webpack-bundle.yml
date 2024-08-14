@@ -1,5 +1,9 @@
 name: Webpack Build
 
+permissions:
+  contents: write   # Allow the action to write to the repository
+                    # necessary for pushing changes later in the workflow
+
 on:
   push:
     branches: [ main ]
