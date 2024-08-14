@@ -67,3 +67,6 @@ Thumbs.db
 .vscode
 *.swp
 *.swo
+
+# local tests
+test/local/
