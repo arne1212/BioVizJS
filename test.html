@@ -3,60 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="conical_gradient.css">
     <title>My HTML Page</title>
 </head>
 <body>
-    <h1>Hello, world!</h1>
-    
-    <div id="someDiv" style="background-color: rgb(255, 98, 0); width: 100px; height: 100px;"></div>
+    <!-- <div class="vignette" id="vignette"></div> -->
+     <!-- <div class="flex-container">
+        <div id="someOtherDiv">tex</div>
+        <div id="someOtherDiv">tex</div> 
+        <div id="someOtherDiv">tex</div>
+        <div id="someOtherDiv">j</div>
+     </div> -->
 
-    <script type="module" src="./index.js"></script>
+     <div id="someElem" style="width:400px; height:280px; background-color: white;">
+     </div>
+     <li id="someElem2" style="width:500px; height:500px;">
+     </li>
+
+    
     <!-- <script type="module">
         console.log("inside script");
         import { TestVis } from "./index.js";
 
         const vis = new TestVis("someDiv");
     </script> -->
-    <script type="module">
-        console.log("inside script");
-        import { HeartRateGaugeVisualization } from "./index.js";
 
-        const vis = new HeartRateGaugeVisualization("someDiv", {
-            referenceValue: 60,
-            valueVisible: true,
-            minValue: 50,
-            maxValue: 80,
-            colors: [
-                {color: "red", deg: 0},
-                {color: "yellow", deg: 10},
-                {color: "green", deg: 20}
-            ]
-        });
+    <script src="./dist/main.js"></script>
+        
+    <script>
 
-        vis.update(75);
+// document.addEventListener('DOMContentLoaded', function() {
+//             if (typeof biovizjs !== 'undefined') {
+//                 const vis = new biovizjs.HeartRateGauge("someElem", {
+//                     referenceValue: 60,
+//                     valueVisible: true,
+//                     minValue: 50,
+//                     maxValue: 80,
+//                     colors: [
+//                         {color: "cyan", deg: 0},
+//                         {color: "green", deg: 60},
+//                         {color: "yellow", deg: 100},
+//                         {color: "red", deg: 180}
+//                     ]
+//                 });
 
-        // setInterval(() => {
-        // const heartRate = Math.floor(Math.random() * 130) + 50; // Generate a random heart rate value between 50 and 180
-        // vis.update(heartRate);
-        // }, 1000);
+//                 setInterval(() => {
+//                     const heartRate = Math.floor(Math.random() * 1) + 65;
+//                     vis.update(heartRate);
+//                 }, 1000);
+//             } else {
+//                 console.error("biovizjs is not defined. Make sure the library is loaded correctly.");
+//             }
+//         });
+        
+        // const vis = new biovizjs.HeartRateSketchFigure("someElem", {
+        //     animated: true,
+        //     valueVisible: true,
+        //     referenceValue: 58,
+        //     levelOffset: 0.1,
+        // });
+
+        // const vis = new biovizjs.HeartRateGauge("someElem", {
+        //     referenceValue: 60,
+        //     valueVisible: true,
+        //     minValue: 50,
+        //     maxValue: 80,
+        //     colors: [
+        //         {color: "cyan", deg: 0},
+        //         {color: "green", deg: 60},
+        //         {color: "yellow", deg: 100},
+        //         {color: "red", deg: 180}
+        //     ]
+        // });
+
+        // const vis = new biovizjs.PulsatingHeart("someElem", {
+        //     valueVisible: true,
+        //     animated: false,
+        //     scaleFactor: 1.5,
+        //     heartColor: "red",
+        // });
+
+        // const vis = new biovizjs.ScreenOverlay("someElem", {
+        //     color: "red",
+        //     referenceValue: 60,
+        //     maxValue: 100,
+        //     tunnelIntensity: 0.1,
+        // });
+
+        // const vis = new biovizjs.HistoryLineGraph('someElem', {
+        //     minValue: 40,
+        //     maxValue: 100,
+        //     referenceValue: 60,
+        //     numberYIntercepts: 1.4,
+        //     numberTimestamps: 'all',
+        //     referenceLineColor: 'purple',
+        //     graphLineColor: 'green',
+        // });
+
+
+
+
+        setInterval(() => {
+        const heartRate = Math.floor(Math.random() * 1) + 65; // Generate a random heart rate value between 50 and 180
+        vis.update(heartRate);
+        }, 1000);
+        
     </script>
-
-    <div>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120">
-            <text x="10" y="70" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#333" stroke="#0066cc" stroke-width="">BioVizJS</text>
-            <text x="110" y="70" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#0066cc">Viz</text>            
-            <!-- Wellenlinie als Unterstreichung -->
-            <path d="M10 90 Q75 70, 140 90 T270 70" stroke="#0066cc" stroke-width="3" fill="none"/>
-            
-            <!-- Datenpunkte auf der Wellenlinie -->
-            <circle cx="10" cy="90" r="3" fill="#0066cc"/>
-            <circle cx="75" cy="80" r="3" fill="#0066cc"/>
-            <circle cx="140" cy="90" r="3" fill="#0066cc"/>
-            <circle cx="205" cy="95" r="3" fill="#0066cc"/>
-            <circle cx="270" cy="70" r="3" fill="#0066cc"/>
-          </svg>
-    </div>
+    
     
 </body>
 </html>

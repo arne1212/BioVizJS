@@ -10,13 +10,14 @@ export class Visualization {
      */
     constructor(containerId) {
         // surpresses the instantiation of abstract class
+        console.log('inside visualization')
         if (new.target === Visualization) {
-            throw new TypeError("Cannot construct Abstract instances directly");
+            console.error("Cannot construct Abstract instances directly");
         }
 
         this.container = document.getElementById(containerId);
         if (!this.container) {
-            throw new Error(`Container with id "${containerId}" not found!`);
+            console.error(`Container with id "${containerId}" not found!`);
         }
     }
 

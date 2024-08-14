@@ -6,7 +6,7 @@ import { noValidColorErrorMessage } from "../utility.js";
  * Sketch figure to visualize heart rate
  * @class
  */
-export class HeartRateSketchFigureVisualization extends HeartRateVisualization {
+export class HeartRateSketchFigure extends HeartRateVisualization {
 
     constructor(containerId, options={}) {
         super(containerId, options);

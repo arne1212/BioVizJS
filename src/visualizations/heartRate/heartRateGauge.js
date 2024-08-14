@@ -6,7 +6,7 @@ import { noValidColorErrorMessage } from "../utility.js";
  * Gauge to visualize heart rate values
  * @class
  */
-export class HeartRateGaugeVisualization extends HeartRateVisualization {
+export class HeartRateGauge extends HeartRateVisualization {
 
     /**
      * 
