@@ -45,8 +45,7 @@ export class PulsatingHeart extends HeartRateVisualization {
 
     draw() {
         const svgBaseColor = this.getSVGBaseColor();
-        const viewBox = this.calculateViewBox()
-        const [, , , viewBoxHeight] = viewBox.split(" ").map(Number);
+        const viewBoxHeight = 32;
         /**
          * A heart.
          * Animation that scales the heart to ressemble a heart beat.
@@ -54,7 +53,7 @@ export class PulsatingHeart extends HeartRateVisualization {
          * After three scaling animations the timespan ('dur') is updated to consider the most recent heart rate.
          */
         const svgCode = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="${this.calculateViewBox()}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="-14 -14 28 ${viewBoxHeight}">
             <path id="pulsatingHeart" 
                 d="M3.7 -8C6.87 -8 9 -5.02 9 -2.24C9 3.39 0.16 8 0 8C-0.16 8 -9 3.39 -9 -2.24C-9 -5.02 -6.87 -8 -3.7 -8C-1.88 -8 -0.69 -7.09 0 -6.29C0.69 -7.09 1.88 -8 3.7 -8Z"
                 stroke-linecap="round" stroke-linejoin="round"
@@ -84,18 +83,6 @@ export class PulsatingHeart extends HeartRateVisualization {
         const newSvg = tempDiv.firstElementChild;
         this.svgElement = newSvg;
         this.container.appendChild(newSvg);
-    }
-
-    calculateViewBox() {
-        // base size for the heart to fill out the container div
-        const baseSize = 18.5;
-        const maxSize = baseSize * (this.scaleFactor);
-        const margin = maxSize / 2;
-        // additional space for the value display
-        const extraHeight = 6;
-        
-        // Viewbox: x y width height
-        return `-${margin} -${margin} ${maxSize} ${maxSize + extraHeight}`;
     }
 
     update(heartRate) {
