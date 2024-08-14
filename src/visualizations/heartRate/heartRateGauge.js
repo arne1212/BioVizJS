@@ -65,8 +65,8 @@ export class HeartRateGauge extends HeartRateVisualization {
     draw() {
         // dynamic determination of colors to use for svg elements, depending on container color, for sufficient contrast
         const svgBaseColor = this.getSVGBaseColor();
-        const containerBackgroundColor = this.container.style.backgroundColor;
-
+        const containerBackgroundColor = this.findBackgroundColor(this.container);
+        
         // define the gradient to use for the gauge
         // either a gradient definiton is provided by the client in the form [{color: "", deg: ""}, {color: "", deg: ""} ...]
         // or a default gradient definition is used
