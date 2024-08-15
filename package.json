@@ -1,5 +1,5 @@
 {
-  "name": "biovizjs",
+  "name": "vitasight",
   "version": "1.0.0",
   "description": "package for visualizing biometric data",
   "browser": "./dist/main.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arne1212/BioVizJS.git"
+    "url": "git+https://github.com/arne1212/VitaSight.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/arne1212/BioVizJS/issues"
+    "url": "https://github.com/arne1212/VitaSight/issues"
   },
-  "homepage": "https://github.com/arne1212/BioVizJS#readme",
+  "homepage": "https://github.com/arne1212/VitaSight#readme",
   "type": "module",
   "devDependencies": {
     "webpack": "^5.93.0",

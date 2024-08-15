@@ -9,8 +9,8 @@ export default {
   mode: 'development',
   entry: './src/index.js',
   output: {
-    filename: 'main.js',
+    filename: 'vitasight.js',
     path: path.resolve(__dirname, 'dist'),
-    library: 'biovizjs',
+    library: 'vitasight',
   },
 };
