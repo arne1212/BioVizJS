@@ -1,4 +1,4 @@
-![BioVizJSLogo](https://github.com/user-attachments/assets/b35a781e-7352-4e58-ba22-7f6ffb36adf8)
+![VitaSight_logo](https://github.com/user-attachments/assets/2c2ebf91-5df3-4200-b5da-ad4348766dc0)
 
 [Introduction]
 
@@ -11,6 +11,7 @@
 - [API Reference](#api-reference)
 - [Contributing](#contributing)
 - [License](#license)
+
 
 ## Installation
 Describe how to install the project here.
