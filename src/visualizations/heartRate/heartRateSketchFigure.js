@@ -134,7 +134,6 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
         // update the displayed value
         const currentValue = this.svgElement.querySelector('#currentVal');
         currentValue.textContent = heartRate;
-        this.playHeartbeatSound(heartRate);
     }
 
     /**

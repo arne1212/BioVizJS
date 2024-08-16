@@ -1,58 +1,4 @@
 import { Visualization } from "../visualization.js";
-// import AudioMixin from './heartRateAudioEffects.js';
-
-const AudioMixin = {
-    heartbeatInterval: null,
-
-    playHeartbeatSound(heartRate) {
-        // Stoppe das bestehende Intervall, falls vorhanden
-        this.stopHeartbeat();
-
-        // Setze ein neues Intervall
-        const intervalMs = (60 / heartRate) * 1000;
-        this.heartbeatInterval = setInterval(() => {
-            this.playSound();
-        }, intervalMs);
-    },
-
-    stopHeartbeat() {
-        if (this.heartbeatInterval) {
-            clearInterval(this.heartbeatInterval);
-            this.heartbeatInterval = null;
-        }
-    },
-
-    playSound() {
-        if(!this.isAudioInitialized) {
-            this.initAudio();
-        }
-        const currentTime = this.audioContext.currentTime;
-        const osc = this.audioContext.createOscillator();
-        const gain = this.audioContext.createGain();
-
-        // base sine soundwave ressembling heartbeats
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(70, currentTime);
-        
-        // controls the volume during the "beat"
-        gain.gain.setValueAtTime(0, currentTime);
-        gain.gain.linearRampToValueAtTime(1, currentTime + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.15);
-
-        osc.connect(gain);
-        gain.connect(this.audioContext.destination);
-
-        osc.start(currentTime);
-        osc.stop(currentTime + 0.15);
-    },
-
-    initAudio() {
-        if (!this.audioContext) {
-            this.audioContext = new AudioContext();
-        }
-        this.isAudioInitialized = true;
-    },  
-};
 
 /**
  * @abstract
@@ -74,7 +20,6 @@ export class HeartRateVisualization extends Visualization {
         super(containerId);
         this.valueVisible;
         this.referenceVal;
-        this.audio = options.audio;
         this.svgElement;
 
         if ('referenceValue' in options) {
@@ -86,10 +31,7 @@ export class HeartRateVisualization extends Visualization {
             this.referenceVal = 70; //default value
         }
 
-        this.valueVisible = 'valueVisible' in options ? Boolean(options.valueVisible) : false; 
-
-        // mixin desgin pattern to add audiofunctionality
-        Object.assign(this, AudioMixin);
+        this.valueVisible = 'valueVisible' in options ? Boolean(options.valueVisible) : false;
     }
 
     /**
