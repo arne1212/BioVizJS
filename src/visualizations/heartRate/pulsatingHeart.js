@@ -17,7 +17,9 @@ export class PulsatingHeart extends HeartRateVisualization {
         this.lastHeartRate;
 
         this.draw();
-        this.setupAnimationListeners();
+        if (this.isAnimated) {
+            this.setupAnimationListeners();
+        }
     }
 
     validateAndSetOptions(options) {
@@ -92,7 +94,7 @@ export class PulsatingHeart extends HeartRateVisualization {
         }
 
         // with the receival of the first heart rate value the animation is started
-        if (!this.isAnimationRunning) {
+        if (this.isAnimated && !this.isAnimationRunning) {
             this.restartAnimation();
         }
     }
