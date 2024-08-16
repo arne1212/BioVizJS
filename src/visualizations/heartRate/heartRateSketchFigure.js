@@ -63,7 +63,7 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
             this.referenceColorIndex = options.referenceColorIndex
         }
 
-        this.isAnimated = 'animated' in options ? Boolean(options.animated) : true;        
+        this.isAnimated = 'animated' in options ? Boolean(options.animated) : false;        
     }
 
     draw() {
