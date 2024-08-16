@@ -109,8 +109,6 @@ export class HistoryLineGraph extends HeartRateVisualization {
         this.canvas.width = this.canvas.height / 0.7;
     }
 
-    
-
     update(heartRate) {
         if(this.data.length == 0) {
             this.minTime = new Date();
@@ -118,6 +116,13 @@ export class HistoryLineGraph extends HeartRateVisualization {
         // each value get's a time stamp attatched to it
         const now = new Date();
         this.maxTime = now;
+        // keep data points in the boundaries of the diagram
+        if (heartRate < this.minVal) {
+            heartRate = this.minVal;
+        }
+        else if (heartRate > this.maxVal) {
+            heartRate = this.maxVal;
+        }
         this.data.push({value: heartRate, time: now})
         this.draw();
     }

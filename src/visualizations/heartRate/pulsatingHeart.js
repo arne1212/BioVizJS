@@ -113,7 +113,9 @@ export class PulsatingHeart extends HeartRateVisualization {
      */
     restartAnimation() {
         const animation = this.getAnimation();
-        const newDuration = 60 / this.lastHeartRate;
+        // in case an error occurs with measuring the heart rate, than the value by which to divide
+        // must not be zero or to small cause otherwise animation will basically stop
+        const newDuration = 60 / Math.max(this.lastHeartRate, 20);
         animation.endElement();
         animation.setAttribute('dur', newDuration + "s");
         animation.beginElement();

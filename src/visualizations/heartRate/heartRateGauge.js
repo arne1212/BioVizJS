@@ -124,7 +124,7 @@ export class HeartRateGauge extends HeartRateVisualization {
             <circle id="needle-circle" cx="50" cy="50" r="3" fill="none" stroke="${svgBaseColor}" stroke-width="0.5" />
             <circle id="needle-tip-circle" cx="50" cy="50" r="0.5" fill="${svgBaseColor}" stroke="none" />
             <line id="gauge-needle" x1="50" y1="50" x2="15" y2="50" stroke="${svgBaseColor}" stroke-width="0.5" stroke-linecap="round" style="transition: transform 0.2s ease-in-out;" />
-            <line id="referenceLine" x1="50" y1="45" x2="50" y2="0" stroke="${svgBaseColor}" stroke-width="1" stroke-dasharray="45" stroke-dashoffset="-35" visibility="${this.showReferenceLine ? 'visible' : 'hidden'}"/>
+            <line id="referenceLine" x1="50" y1="45" x2="50" y2="0" stroke="${svgBaseColor}" stroke-width="1" stroke-dasharray="10 35" stroke-dashoffset="10" visibility="${this.showReferenceLine ? 'visible' : 'hidden'}"/>
 
             <g id="valueDisplay" visibility="${this.valueVisible ? 'visible' : 'hidden'}">
                 <rect width="10" height="8" x="45" y="35" rx="2" ry="2" fill="${containerBackgroundColor}" stroke="${svgBaseColor}" stroke-width="0.5"/>
