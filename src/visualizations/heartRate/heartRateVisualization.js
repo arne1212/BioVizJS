@@ -31,7 +31,7 @@ export class HeartRateVisualization extends Visualization {
             this.referenceVal = 70; //default value
         }
 
-        this.valueVisible = 'valueVisible' in options ? Boolean(options.valueVisible) : false;
+        this.valueVisible = 'valueVisible' in options ? Boolean(options.valueVisible) : true;
     }
 
     /**
