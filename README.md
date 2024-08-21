@@ -36,6 +36,7 @@ List of main features:
 
 ## Examples
 Include practical examples here.
+Mögliche Containertypen !! Wird in BA beschrieben
 
 ## API Reference
 Detailed API documentation.
