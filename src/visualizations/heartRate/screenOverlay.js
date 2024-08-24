@@ -6,7 +6,7 @@ const FULL_SCREEN_DIV_ID = 'vignetteFullScreen';
 
 export class ScreenOverlay extends HeartRateVisualization {
 
-    constructor(containerId = null ,options = {}) {
+    constructor(containerId = null, options = {}) {
         if(containerId) {
             super(containerId, options)
         }
