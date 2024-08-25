@@ -1,7 +1,24 @@
 import { HeartRateVisualization } from "./heartRateVisualization.js";
 import { isValidColor } from "../utility.js";
 import { noValidColorErrorMessage } from "../utility.js";
-import * as d3 from "d3"
+// import necessary d3 modules
+import { 
+    select as d3Select, 
+    scaleTime as d3ScaleTime, 
+    scaleLinear as d3ScaleLinear, 
+    line as d3Line, 
+    range as d3Range, 
+    axisLeft as d3AxisLeft 
+} from 'd3';
+
+const d3 = {
+    select: d3Select,
+    scaleTime: d3ScaleTime,
+    scaleLinear: d3ScaleLinear,
+    line: d3Line,
+    range: d3Range,
+    axisLeft: d3AxisLeft
+};
 
 export class HistoryLineGraph extends HeartRateVisualization {
     constructor(containerId, options = {}) {
