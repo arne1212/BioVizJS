@@ -1,121 +1,173 @@
 import { HeartRateVisualization } from "./heartRateVisualization.js";
 import { isValidColor } from "../utility.js";
 import { noValidColorErrorMessage } from "../utility.js";
+import * as d3 from "d3"
 
 export class HistoryLineGraph extends HeartRateVisualization {
-    constructor(containerId, options={}) {
-        super(containerId, options)
+    constructor(containerId, options = {}) {
+        super(containerId, options);
+        this.numberTimestamps = options.numberTimestamps || 5;
         this.minVal;
         this.maxVal;
+        this.referenceLineColor;
         this.graphLineColor;
-        this.refLineColor;
-        this.numberTimestamps;
-        this.numberYIntercepts;
-        this.canvas = document.createElement('canvas');
-        this.ctx = this.canvas.getContext('2d');
+        this.xAxisLabel;
+        this.yAxisLabel;
 
-        this.container.appendChild(this.canvas);
+        this.data = [];
         
-        this.data = []; // container for the data points
-
-        this.minTime = new Date();
-        this.maxTime = new Date();
+        // determine size dimensions of graph
+        this.margin = {
+            top: this.container.clientHeight * 0.1,
+            right: this.container.clientWidth * 0.1,
+            bottom: this.container.clientWidth * 0.15,
+            left: this.container.clientWidth * 0.15
+        };
+        
+        this.availableWidth = this.container.clientWidth - this.margin.left - this.margin.right;
+        this.availableHeight = this.availableWidth * 0.7;
+        
+        this.width = this.availableWidth;
+        this.height = this.availableHeight;
+        
+        this.svgHeight = this.height + this.margin.top + this.margin.bottom;
+        
+        // predefine objects of the graph
+        this.svg = null;
+        this.xScale = null;
+        this.yScale = null;
+        this.xAxis = null;
+        this.yAxis = null;
+        this.line = null;
+        this.path = null;
+        this.startTime = null;
+        
+        this.timeInterval = 60000; // 1 minute in ms
         
         this.validateAndSetOptions(options);
         this.draw();
     }
 
-    draw() {
-        // adjust canvas size to container size
-        this.updateCanvasSize();
-
-        const paddingFraction = 0.1; // 10% of the canvas height is used for padding
-        const padding = this.canvas.height * paddingFraction;
-        const zero = 0 + padding;   // redfine zero of coordinate system to consider padding
-        const graphWidth = this.canvas.width - padding * 2;
-        const graphHeight = this.canvas.height - padding * 2;
-
-        const fontSize = graphHeight * 0.05; // font size is relative to canvas size to enhance responsitiviy
-
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // draw axis
-        this.ctx.beginPath();
-        this.ctx.moveTo(zero, zero);
-        this.ctx.lineTo(zero, zero + graphHeight);
-        this.ctx.lineTo(zero + graphWidth, zero + graphHeight);
-        this.ctx.stroke();
-
-        // draw reference line
-        const refY = zero + graphHeight * (1 -(this.referenceVal - this.minVal) / (this.maxVal - this.minVal));
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = this.refLineColor;
-        this.ctx.setLineDash([2, 2]);
-        this.ctx.moveTo(zero, refY);
-        this.ctx.lineTo(zero + graphWidth, refY);
-        this.ctx.stroke();
-        this.ctx.setLineDash([]);
-        
-        // calculate timestamps
-        const numberTimestamps = this.numberTimestamps;
-        const timestamps = []
-        const timeDifference = this.maxTime.getTime() - this.minTime.getTime();
-        for (let i = 0; i < numberTimestamps; i++) {
-            const milliSecondOffset  = i * timeDifference / (numberTimestamps - 1);
-            timestamps.push(new Date(this.minTime.getTime() + milliSecondOffset));
-        }
-        // draw timestamps on x axis
-        timestamps.forEach((timestamp, index) => {
-            const y = zero + graphHeight + fontSize * 0.5
-            const x = zero + index * (graphWidth / (numberTimestamps - 1))
-
-            this.ctx.fillStyle = 'black';
-            this.ctx.font = `${fontSize}px Arial`;
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'top';
-            this.ctx.fillText(timestamp.toTimeString().split(' ')[0], x, y);
-        })
-
-        // draw y axis sections
-        this.ctx.textAlign = 'right';
-        this.ctx.textBaseline = 'middle';
-        for (let i = 0; i < this.numberYIntercepts; i++) {
-            const value = this.minVal + (this.maxVal - this.minVal) * i / (this.numberYIntercepts - 1);
-            const y = zero + graphHeight - (value - this.minVal) / (this.maxVal - this.minVal) * graphHeight;
-            this.ctx.fillText(parseInt(value), zero - fontSize * 0.5, y);
-        }
-
-        // draw data points
-        this.ctx.beginPath();
-        this.data.forEach((point, index) => {
-            // calculate coordinates for each point
-            const x = zero + (point.time - this.minTime) / (this.maxTime - this.minTime) * graphWidth;
-            const y = zero + graphHeight - (point.value - this.minVal) / (this.maxVal - this.minVal) * graphHeight;
-
-            if (index === 0) {
-                this.ctx.moveTo(x, y);
-            } else {
-                this.ctx.lineTo(x, y);
-            }
-        });
-        this.ctx.strokeStyle = `${this.graphLineColor}`;
-        this.ctx.stroke();
+    /**
+     * calculates an appropriate font size depending on the size of the graph
+     * @returns a font size value
+     */
+    calculateFontSize() {
+        const shrinkingFactor = 18;
+        const baseSize = Math.min(this.width, this.height) / shrinkingFactor;
+        return baseSize
     }
 
-    updateCanvasSize() {
-        var rect = this.canvas.parentNode.getBoundingClientRect();
-        // size of y axis is 70% of the size of x axis as a fixed proportion
-        this.canvas.height = Math.min(0.7 * rect.width, rect.height);
-        this.canvas.width = this.canvas.height / 0.7;
+    /**
+     * applies an appropriate global font size to the graph.
+     * The larger the graph the larger the font size
+     */
+    applyFontStyles() {
+        this.svg.selectAll("text")
+            .style("font-size", `${this.calculateFontSize()}px`)
+            .style("font-family", "Arial, sans-serif");
+    }
+
+    draw() {
+        this.svg = d3.select(this.container)
+            .append("svg")
+            .attr("width", this.width + this.margin.left + this.margin.right)
+            .attr("height", this.svgHeight)
+            .append("g")
+            .attr("transform", `translate(${this.margin.left},${this.margin.top})`);
+
+        this.xScale = d3.scaleTime().range([0, this.width]);
+        this.yScale = d3.scaleLinear().range([this.height, 0])
+            .domain([this.minVal, this.maxVal]);
+
+        this.svg.append("line")
+            .attr("class", "x-axis-line")
+            .attr("x1", 0)
+            .attr("y1", this.height)
+            .attr("x2", this.width)
+            .attr("y2", this.height)
+            .style("stroke", "black");
+
+        this.yAxis = this.svg.append("g")
+            .attr("class", "y axis");
+
+        this.line = d3.line()
+            .x(d => this.xScale(this.getRelativeTime(d.time)))
+            .y(d => this.yScale(d.value));
+
+        this.path = this.svg.append("path")
+            .attr("class", "line")
+            .style("fill", "none")
+            .style("stroke", `${this.graphLineColor}`)
+            .style("stroke-width", "2px");
+
+        if (this.referenceVal !== undefined) {
+            this.svg.append("line")
+                .attr("class", "reference-line")
+                .attr("x1", 0)
+                .attr("y1", this.yScale(this.referenceVal))
+                .attr("x2", this.width)
+                .attr("y2", this.yScale(this.referenceVal))
+                .style("stroke", `${this.refLineColor}`)
+                .style("stroke-dasharray", "5,5");
+        }
+
+        this.xAxis = this.svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", `translate(0,${this.height})`);
+
+        // calculate the position of the timestamps to spread evenly along the x-Axis
+        this.xTicks = Array.from({length: this.numberTimestamps}, (_, i) => i * (this.width / (this.numberTimestamps - 1)));
+        
+        this.xAxis.selectAll(".tick")
+            .data(this.xTicks)
+            .enter()
+            .append("g")
+            .attr("class", "tick")
+            .attr("transform", d => `translate(${d},0)`)
+            .append("text")
+            .attr("y", 9)
+            .attr("dy", ".71em")
+            .style("text-anchor", "middle");
+
+
+        const yTicks = d3.range(this.minVal, this.maxVal + 1, 10);
+        this.yAxis.call(d3.axisLeft(this.yScale).tickValues(yTicks));
+
+        this.svg.append("text")
+            .attr("transform", `translate(${this.width/2}, ${this.height + this.margin.bottom - 5})`)
+            .style("text-anchor", "middle")
+            .text(`${this.xAxisLabel}`);
+
+        this.svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - this.margin.left)
+            .attr("x", 0 - (this.height / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text(`${this.yAxisLabel}`);
+
+        this.applyFontStyles();
+    }
+
+    formatTime(date) {
+        if (!this.startTime) {
+            this.startTime = date;
+        }
+        const elapsedSeconds = Math.floor((date - this.startTime) / 1000);
+        const minutes = Math.floor(elapsedSeconds / 60);
+        const seconds = elapsedSeconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    getRelativeTime(date) {
+        if (!this.startTime) {
+            return 0;
+        }
+        return (date - this.startTime) / 1000; // passed time in seconds
     }
 
     update(heartRate) {
-        if(this.data.length == 0) {
-            this.minTime = new Date();
-        }
-        // each value get's a time stamp attatched to it
-        const now = new Date();
-        this.maxTime = now;
         // keep data points in the boundaries of the diagram
         if (heartRate < this.minVal) {
             heartRate = this.minVal;
@@ -123,11 +175,30 @@ export class HistoryLineGraph extends HeartRateVisualization {
         else if (heartRate > this.maxVal) {
             heartRate = this.maxVal;
         }
-        this.data.push({value: heartRate, time: now})
-        this.draw();
-    }
 
-    // section of methods that validate the user input
+        const now = new Date();
+        if (!this.startTime) {
+            this.startTime = now;
+        }
+        this.data.push({ time: now, value: heartRate });
+
+        const currentDuration = this.getRelativeTime(now);
+        let xDomain = [0, Math.max(currentDuration, this.numberTimestamps - 1)];        
+        this.xScale.domain(xDomain);
+
+        // Aktualisiere nur die Textwerte der Zeitstempel, nicht ihre Position
+        this.xAxis.selectAll(".tick text")
+            .data(this.xTicks)
+            .text(d => {
+                const time = this.xScale.invert(d);
+                return this.formatTime(new Date(this.startTime.getTime() + time * 1000));
+            });
+
+        this.path.datum(this.data)
+            .attr("d", this.line);
+
+        this.applyFontStyles();
+    }
 
     /**
      * Method to validate the user input
@@ -146,22 +217,29 @@ export class HistoryLineGraph extends HeartRateVisualization {
             this.numberTimestamps = 5;
         }
 
-        if (options.numberYIntercepts) {
-            if (Number.isInteger(options.numberYIntercepts)) {
-                this.numberYIntercepts = options.numberYIntercepts
-            } else {
-                this.numberYIntercepts = 5;
-                console.error(`Parameter numberYIntercepts must be integer. Input was '${options.numberYIntercepts}'. Value is set to default value 5.`)
-            }
+        if (options.xAxisLabel) {
+            this.xAxisLabel = options.xAxisLabel
         }
         else {
-            this.numberYIntercepts = 5;
+            this.xAxisLabel = "Zeit";
         }
+
+        if (options.yAxisLabel) {
+            this.yAxisLabel = options.yAxisLabel
+        }
+        else {
+            this.yAxisLabel = "Herzfrequenz";
+        }
+        
 
         this.validateColors(options);
         this.validateMinAndMaxValue(options);
     }
 
+    /**
+     * validate the color values the user has passed
+     * @param {object} options 
+     */
     validateColors(options) {
         if ('referenceLineColor' in options) {
             if (isValidColor(options.referenceLineColor)) {
@@ -180,10 +258,14 @@ export class HistoryLineGraph extends HeartRateVisualization {
                 console.error(noValidColorErrorMessage(options.graphLineColor));
             }
         } else {
-            this.graphLineColor = "blue"; // default value
+            this.graphLineColor = "steelblue"; // default value
         }
     }
 
+    /**
+     * validate that minValue <= referenceVal <= maxValue are in the right relation
+     * @param {object} options 
+     */
     validateMinAndMaxValue(options) {
         const defaultMinVal = 40;
         const defaultMaxVal = 180;
