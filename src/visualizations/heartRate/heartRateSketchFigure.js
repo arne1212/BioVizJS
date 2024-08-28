@@ -1,6 +1,5 @@
 import { HeartRateVisualization } from "./heartRateVisualization.js";
 import { isValidColor } from "../utility.js";
-import { noValidColorErrorMessage } from "../utility.js";
 
 /**
  * Sketch figure to visualize heart rate
@@ -41,17 +40,24 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
             this.levelOffset = 0.05;
         }
 
+        /**
+         * Validates and sets the color steps for the visualization.
+         * If any color in the options is invalid, it sets a default color scheme.
+         */
         if ('colorSteps' in options && options.colorSteps.length > 0) {
-            for (let color of options.colorSteps) {
-                if (!isValidColor(color)) {
-                    throw new Error(noValidColorErrorMessage(color));
-                }
+            const isValidColorScheme = options.colorSteps.every(color => isValidColor(color));
+            
+            if (isValidColorScheme) {
+                this.colorSteps = options.colorSteps;
+            } else {
+                console.error("Invalid color(s) in colorSteps. Using default color scheme.");
+                this.colorSteps = ['darkcyan', 'forestgreen', 'khaki', 'orange', 'red'];
             }
-            this.colorSteps = options.colorSteps;
         }
         else {
             this.colorSteps = ['darkcyan', 'forestgreen', 'khaki', 'orange', 'red'];
         }
+    
 
         // - Ensure referenceColorIndex is set
         // - Confirm it's a positive integer
@@ -68,7 +74,7 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
             this.referenceColorIndex = options.referenceColorIndex
         }
 
-        this.isAnimated = 'animated' in options ? Boolean(options.animated) : false;        
+        this.isAnimated = 'isAnimated' in options ? Boolean(options.isAnimated) : false;        
     }
 
     draw() {

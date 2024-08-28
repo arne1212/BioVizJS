@@ -48,15 +48,15 @@ export class ScreenOverlay extends HeartRateVisualization {
 
         if ('color' in options) {
             if(!isValidColor(options.color)) {
-                this.color = "rgba(0,0,0,";
-                console.error(noValidColorErrorMessage + ". Default color is black.");
+                this.color = "rgba(255,0,0,";
+                console.error(noValidColorErrorMessage + ". Default color is red.");
             }
             else {
                 this.color = this.transformColor(options.color);
             }
         }
         else {
-            this.color = "red"
+            this.color = "rgba(255,0,0,"
         }
 
         if ('maxValue' in options) {
@@ -73,7 +73,7 @@ export class ScreenOverlay extends HeartRateVisualization {
             console.info(`maxValue must be set to determine the extent of the tunnel effect and is set to '${this.maxVal}' by default.`)
         }
 
-        const tunnelIntensityDefault = 0.1;
+        const tunnelIntensityDefault = 0.1 / 10;
         if ('tunnelIntensity' in options) {
             if(typeof options.tunnelIntensity !== "number" || options.tunnelIntensity < 0 || options.tunnelIntensity > 1) {
                 this.tunnelIntensity = tunnelIntensityDefault;

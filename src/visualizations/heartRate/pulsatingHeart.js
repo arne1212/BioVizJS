@@ -43,7 +43,7 @@ export class PulsatingHeart extends HeartRateVisualization {
             this.heartColor = "red";
         }
 
-        this.isAnimated = 'animated' in options ? Boolean(options.animated) : true;        
+        this.isAnimated = 'isAnimated' in options ? Boolean(options.isAnimated) : true;        
     }
 
     draw() {

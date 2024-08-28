@@ -31,6 +31,7 @@ export class HistoryLineGraph extends HeartRateVisualization {
         this.graphLineColor;
         this.xAxisLabel;
         this.yAxisLabel;
+        this.showReferenceLine;
 
         this.data = [];
         
@@ -48,7 +49,6 @@ export class HistoryLineGraph extends HeartRateVisualization {
         this.height = this.width * 0.7;
         
         this.svgHeight = this.height + this.margin.top + this.margin.bottom;
-        
         // predefine objects of the graph
         this.svg = null;
         this.xScale = null;
@@ -95,7 +95,9 @@ export class HistoryLineGraph extends HeartRateVisualization {
         // Set up the scales for x and y axes
         this.xScale = d3.scaleTime().range([0, this.width]);
         // y scale contains the numbers between minValue and maxValue
-        this.yScale = d3.scaleLinear().range([this.height, 0])
+        const yPadding = 0.03; // padding so that the largest value on the y axis is not cut off
+        this.yScale = d3.scaleLinear()
+            .range([this.height, 0 + this.height * yPadding])
             .domain([this.minVal, this.maxVal]);
 
         // Draw the x-axis line
@@ -124,7 +126,7 @@ export class HistoryLineGraph extends HeartRateVisualization {
             .style("stroke-width", "2px");
 
         // Draw the reference line if a reference value is provided
-        if (this.referenceVal !== undefined) {
+        if (this.showReferenceLine) {
             this.svg.append("line")
                 .attr("class", "reference-line")
                 .attr("x1", 0)
@@ -270,7 +272,12 @@ export class HistoryLineGraph extends HeartRateVisualization {
         else {
             this.yAxisLabel = "Herzfrequenz";
         }
-        
+
+        if ('showReferenceLine' in options &&  typeof options.showReferenceLine == "boolean") {
+            this.showReferenceLine = options.showReferenceLine;
+        } else {
+            this.showReferenceLine = true;
+        }     
 
         this.validateColors(options);
         this.validateMinAndMaxValue(options);
