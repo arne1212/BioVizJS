@@ -9,6 +9,7 @@ export class HeartRateVisualization extends Visualization {
     /**
      * 
      * @param {string} containerId - the id of the html element which will contain the heart rate visualization
+     * @param {object} options - the parameters a client can pass to configure the appearence
      */
     constructor(containerId, options = {}) {
 
@@ -22,6 +23,7 @@ export class HeartRateVisualization extends Visualization {
         this.referenceVal;
         this.svgElement;
 
+        // each heart rate visualization has an reference value
         if ('referenceValue' in options) {
             if (typeof options.referenceValue !== 'number' || options.referenceValue < 0) {
                 throw new Error('referenceValue must be a number that is at least 0');

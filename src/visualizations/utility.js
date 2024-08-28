@@ -1,3 +1,9 @@
+/**
+ * checks whether the string parameter is a valid color declaration
+ * 
+ * @param {string} colorName 
+ * @returns boolean whether the string is a valid color declaration
+ */
 export function isValidColor(colorName) {
     const style = new Option().style;
     style.color = colorName;

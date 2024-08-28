@@ -11,17 +11,21 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
     constructor(containerId, options={}) {
         super(containerId, options);
         this.isAnimated;
-        // the percentage amount the heart rate needs to diverge from the referenceValue in order to change the color
-        // multiples of 5% offset will lead to color change by default
+        // the percentage value the heart rate needs to diverge from the referenceValue in order to change the color
+        // by default multiples of 5% offset will lead to a color change
         this.levelOffset;
+        // explicitly define the color value of the different offset levels and implicitly thereby the number of color steps
         this.colorSteps;
+        // the index in the colorSteps-Array of the color to display, when heart rate is around reference value
         this.referenceColorIndex;
 
-        // class constants for the y values of the highest and lowest level
+        // highest and lowest level y values of the sketch figure (feet and tip of head) in the svg viewbox
+        // used to set fill level in the body
         this.minY = 89;
         this.maxY = 176;
-        this.currentY = this.maxY; // Neue Eigenschaft
-        this.phase = 0; // Neue Eigenschaft
+
+        this.currentY = this.maxY;
+        this.phase = 0;
 
         this.validateAndSetOptions(options);
         this.draw();
@@ -70,6 +74,11 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
     draw() {
         var y = this.maxY;
         var svgBaseColor = this.getContrastingBaseColor();
+        /**
+         * svg comprising a path enclosing the body of a sketch figure,
+         * a value display above the head of the figure
+         * and a path that marks the fill level
+         */
         const svgCode = `
         <svg width="100%" height="100%" viewBox="128 75 36 109" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -200,6 +209,12 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
         return y 
     }
 
+    /**
+     * calculate the fill color based on the offset of the heart rate in relation to the referenceValue
+     * and the definition of the colorSteps array
+     * @param {number} heartRate 
+     * @returns 
+     */
     calculateFillColor(heartRate) {
         var offset;
         var steps;

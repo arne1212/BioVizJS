@@ -1,3 +1,4 @@
+// integrate the modules
 import { HeartRateGauge } from "./visualizations/heartRate/heartRateGauge.js";
 import { HeartRateSketchFigure } from "./visualizations/heartRate/heartRateSketchFigure.js";
 import { PulsatingHeart } from "./visualizations/heartRate/pulsatingHeart.js";

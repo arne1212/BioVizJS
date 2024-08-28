@@ -19,51 +19,7 @@ export class HeartRateGauge extends HeartRateVisualization {
         super(containerId, options);
 
         this.validateAndSetOptions(options);
-
         this.draw();
-    }
-
-    validateAndSetOptions(options) {
-        const defaultMinVal = 40;
-        const defaultMaxVal = 180;
-        
-        this.colors = 'colors' in options ? options.colors : null;
-
-        if ('minValue' in options) {
-            if (typeof options.minValue !== 'number' || options.minValue < 0) {
-                throw new Error('minValue must be a number that is at least 0');
-            }
-            this.minVal = options.minValue 
-        } else {
-            this.minVal = defaultMinVal
-        }
-
-        if ('maxValue' in options) {
-            if (typeof options.minValue !== 'number' || options.maxValue < 1) {
-                throw new Error('maxValue must be a number that is at least 1');
-            }
-            this.maxVal = options.maxValue 
-        } else {
-            this.maxVal = defaultMaxVal
-        }
-
-        if (this.minVal > this.maxVal) {
-            var errorMessage = `Minimum value ${this.minVal} must not be larger than maximum value ${this.maxVal}. Minimum value is set to default=${defaultMinVal} and maximum value to default=${defaultMaxVal}`;
-            this.minVal = defaultMinVal;
-            this.maxVal = defaultMaxVal;
-            console.error(errorMessage);     
-        }
-        if (this.referenceVal < this.minVal  || this.referenceVal > this.maxVal) {
-            var errorMessage = `Reference value ${this.referenceVal} must be between minimum value ${this.minVal} and maximum value ${this.maxVal}`;
-            this.referenceVal = null;
-            console.error(errorMessage);
-        }
-
-        if ('showReferenceLine' in options &&  typeof options.showReferenceLine == "boolean") {
-            this.showReferenceLine = options.showReferenceLine;
-        } else {
-            this.showReferenceLine = true;
-        }
     }
 
     /**
@@ -84,6 +40,12 @@ export class HeartRateGauge extends HeartRateVisualization {
         //default gradient definition
          `, deepskyblue ${referenceValueAngle / 4}deg, aqua ${2 * (referenceValueAngle / 4)}deg, mediumspringgreen ${3 * (referenceValueAngle / 4)}deg, lime ${referenceValueAngle}deg, greenyellow ${remainingAngle / 4 + referenceValueAngle}deg, yellow ${2 * (remainingAngle / 4) + referenceValueAngle}deg, orange ${3 * (remainingAngle / 4) + referenceValueAngle}deg, red 180deg`;
 
+        /**
+         * svg displaying a gauge with color gradient,
+         * a value display and a needle pointing at the current value in the gauge
+         * 
+         * clipping and masking are used to create the caracteristic arch of the gauge
+         */
         const svgCode = `
         <svg width="100%" height="100%" viewBox="-1 -1 102 60" xmlns="http://www.w3.org/2000/svg" font-size="10">
             <defs>
@@ -149,7 +111,7 @@ export class HeartRateGauge extends HeartRateVisualization {
     }
 
     /**
-     * Parses a string for a css conic-gradient from the clients provided gradient definiton
+     * Parses a string for a css conic-gradient passed by the client
      * @returns a string defining a conic-gradient in css syntax
      */
     parseGradientDefinition() {
@@ -198,11 +160,7 @@ export class HeartRateGauge extends HeartRateVisualization {
         }        
     }
 
-    /**
-     * @override
-     * updates the gauge visualization to display a new value
-     * @param {number} heartRate heart rate value to visualize
-     */
+
     update(heartRate) {
         if (!this.svg) {
             return;
@@ -238,5 +196,57 @@ export class HeartRateGauge extends HeartRateVisualization {
         if (currentValue) {
             currentValue.textContent = heartRate;
         }      
+    }
+
+    validateAndSetOptions(options) {
+        
+        this.colors = 'colors' in options ? options.colors : null;
+
+        if ('showReferenceLine' in options &&  typeof options.showReferenceLine == "boolean") {
+            this.showReferenceLine = options.showReferenceLine;
+        } else {
+            this.showReferenceLine = true;
+        }
+
+        this.validateMinAndMaxValue(options);
+    }
+
+    /**
+     * validate that minValue <= referenceVal <= maxValue are in the right relation
+     * @param {object} options 
+     */
+    validateMinAndMaxValue(options) {
+        const defaultMinVal = 40;
+        const defaultMaxVal = 180;
+
+        if ('minValue' in options) {
+            if (typeof options.minValue !== 'number' || options.minValue < 0) {
+                console.error('minValue must be a number that is at least 0');
+            }
+            this.minVal = options.minValue 
+        } else {
+            this.minVal = defaultMinVal
+        }
+
+        if ('maxValue' in options) {
+            if (typeof options.minValue !== 'number' || options.maxValue < 1) {
+                console.error('maxValue must be a number that is at least 1');
+            }
+            this.maxVal = options.maxValue 
+        } else {
+            this.maxVal = defaultMaxVal
+        }
+
+        if (this.minVal > this.maxVal) {
+            var errorMessage = `Minimum value ${this.minVal} must not be larger than maximum value ${this.maxVal}. Minimum value is set to default=${defaultMinVal} and maximum value to default=${defaultMaxVal}`;
+            this.minVal = defaultMinVal;
+            this.maxVal = defaultMaxVal;
+            console.error(errorMessage);     
+        }
+        if (this.referenceVal < this.minVal  || this.referenceVal > this.maxVal) {
+            var errorMessage = `Reference value ${this.referenceVal} must be between minimum value ${this.minVal} and maximum value ${this.maxVal}`;
+            this.referenceVal = this.minVal + (this.maxVal - this.minVal) / 2;  // set reference value right in the middle
+            console.error(errorMessage);
+        }
     }
 }

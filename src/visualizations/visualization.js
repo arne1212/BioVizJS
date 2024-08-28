@@ -49,8 +49,6 @@ export class Visualization {
         throw new Error("Abstract method 'update' can't be executed. Must be overridden in Subclass.");
     }
 
-    // folgende zwei Methoden in utility Klasse auslagern oder die utility Klasse umgekehrt hier integrieren
-
     /**
      * Determines wheter black of white provides more contrast considering the containers color
      * @returns black or white depending on what provides better contrast
