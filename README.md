@@ -34,6 +34,8 @@ All the source code of the library is bundled into the file [dist/vitasight.js](
 To make use of the library, copy the contents of vitasight into a .js file in your working directory.
 For usage in HTML files simple include the .js file via a script tag.
 
+Alternatively the library can be directly included without the need to create a own local file by using the link <https://cdn.jsdelivr.net/gh/arne1212/BioVizJS/dist/vitasight.js> via the Content Delivery Network [jsDelivr](https://www.jsdelivr.com/).
+
 ```
 project/
 └── src/
@@ -49,7 +51,10 @@ First of all we need to create an HTML Element to bind the visualization to and 
 <body>
     <div id="someElem" style="width: 30%"></div>
 
+   <!-- Alt. 1: Using local copy of vitasight.js -->
     <script src="./javascript/vitasight.js"></script>
+   <!-- Alt. 2: Using jsdelivr to directly fetch the library from the web -->
+   <script src="https://cdn.jsdelivr.net/gh/arne1212/BioVizJS/dist/vitasight.js"></script>
     <script>
         // instanitation goes here
     </script>
