@@ -1,6 +1,10 @@
 ![VitaSight_logo](https://github.com/user-attachments/assets/10e6f62e-485f-4bc6-8245-7f29b01b1e03)
 
+<br>
+
 VitaSight is an open-source JavaScript library for visualizing physiological data in web browsers. It is designed to be easily integrated into oTree experiments, empowering researchers with easy-to-use visualization solutions.
+
+<br>
 
 # Table of Contents
 
@@ -309,7 +313,10 @@ These are all imported into the [index.js](src/index.js) file which acts as the 
 
 <br>
 
-![uml_class_ba_viz drawio](https://github.com/user-attachments/assets/e2838443-f1c9-4cc6-b274-dea16fa14624)
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/e2838443-f1c9-4cc6-b274-dea16fa14624" width="40%">
+</div>
+
 
 <br>
 
