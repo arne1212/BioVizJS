@@ -97,10 +97,11 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
         </g>
         </svg>
         `;
+        // get safe reference to the svg element of the instance to avoid naming conflicts with other DOM elements
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = svgCode;
-        this.svgElement = tempDiv.firstElementChild;
-        this.container.appendChild(this.svgElement);
+        this.svg = tempDiv.firstElementChild;
+        this.container.appendChild(this.svg);
         
         // start animation
         if (this.isAnimated) {
@@ -109,7 +110,7 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
     }
 
     update(heartRate) {
-        if (!this.svgElement) return;
+        if (!this.svg) return;
     
         const fillLevelY = this.calculateFillLevel(heartRate);
         const fillColor = this.calculateFillColor(heartRate);
@@ -117,12 +118,12 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
 
     
         if (this.isAnimated) {
-            const wave = this.svgElement.querySelector("#wave");
+            const wave = this.svg.querySelector("#wave");
             if (wave) {
                 wave.style.fill = fillColor;
             }
         } else {
-            const fillRect = this.svgElement.querySelector("#fillBox");
+            const fillRect = this.svg.querySelector("#fillBox");
             if (fillRect) {
                 fillRect.setAttribute("y", fillLevelY);
                 fillRect.setAttribute("fill", fillColor);
@@ -131,7 +132,7 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
         }
     
         // Update the displayed value
-        const currentValue = this.svgElement.querySelector('#currentVal');
+        const currentValue = this.svg.querySelector('#currentVal');
         if (currentValue) {
             currentValue.textContent = heartRate;
         }
@@ -143,7 +144,7 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
     }
 
     updatePathWave() {
-        const path = this.svgElement.querySelector('#wave');
+        const path = this.svg.querySelector('#wave');
         const width = 36;
         const baseY = this.currentY;
         const amplitude = 1.5;

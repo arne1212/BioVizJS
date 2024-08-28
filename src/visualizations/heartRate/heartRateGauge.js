@@ -139,7 +139,7 @@ export class HeartRateGauge extends HeartRateVisualization {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = svgCode;
         const newSvg = tempDiv.firstElementChild;
-        this.svgElement = newSvg;
+        this.svg = newSvg;
         this.container.appendChild(newSvg);
 
         if (this.referenceVal) {
@@ -187,8 +187,8 @@ export class HeartRateGauge extends HeartRateVisualization {
      * @param {number} maxHeartRate object attribute for the max heart rate to display
      */
     setReferenceLine(referenceLineVal, minHeartRate, maxHeartRate) {
-        if (this.svgElement) {
-            const referenceLine = this.svgElement.querySelector('#referenceLine');
+        if (this.svg) {
+            const referenceLine = this.svg.querySelector('#referenceLine');
             if (referenceLine) {
                 const fillPercentage = (referenceLineVal - minHeartRate) / (maxHeartRate - minHeartRate);
                 const referenceLineAngle = fillPercentage * 180 - 90;
@@ -203,7 +203,7 @@ export class HeartRateGauge extends HeartRateVisualization {
      * @param {number} heartRate heart rate value to visualize
      */
     update(heartRate) {
-        if (!this.svgElement) {
+        if (!this.svg) {
             return;
         }
 
@@ -216,7 +216,7 @@ export class HeartRateGauge extends HeartRateVisualization {
         }
         // adjust the masking of the gauge by adjusting the dashoffset revealing more or less of the gradient depending on the heart rate value
         const fillPercentage = (heartRate - this.minVal) / (this.maxVal - this.minVal);
-        const gaugeMask = this.svgElement.querySelector("#gauge-mask");
+        const gaugeMask = this.svg.querySelector("#gauge-mask");
         if (gaugeMask) {
             const maskLength = gaugeMask.getTotalLength();
             const fillLength = maskLength * fillPercentage;
@@ -225,7 +225,7 @@ export class HeartRateGauge extends HeartRateVisualization {
         }
         
         // rotate the needle
-        const gaugeNeedle = this.svgElement.querySelector("#gauge-needle");
+        const gaugeNeedle = this.svg.querySelector("#gauge-needle");
         if (gaugeNeedle) {
             const needleAngle = fillPercentage * 180;
             gaugeNeedle.style.transformOrigin = '50px 50px';
@@ -233,7 +233,7 @@ export class HeartRateGauge extends HeartRateVisualization {
         }
         
         // update the displayed value
-        const currentValue = this.svgElement.querySelector('#currentVal');
+        const currentValue = this.svg.querySelector('#currentVal');
         if (currentValue) {
             currentValue.textContent = heartRate;
         }      

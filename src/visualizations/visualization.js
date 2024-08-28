@@ -21,7 +21,7 @@ export class Visualization {
     }
 
     /**
-     * @abstract
+     * method to validate the configuration input of clients
      * 
      * @param {Object} options - visualization specific options to define it's attributes
      * 
@@ -30,9 +30,7 @@ export class Visualization {
         throw new Error("Abstract method 'validateAndSetOptions' can't be executed. Must be overridden in Subclass.");
     }
 
-    /**
-     * @abstract
-     * 
+    /** 
      * draws the visualization onto the screen
      */
     draw() {
@@ -40,7 +38,7 @@ export class Visualization {
     }
 
     /**
-     * @abstract
+     * update the visualization to display a new datapoint
      * 
      * @param {*} data - New information to be displayed in the visualization
      */
@@ -48,7 +46,7 @@ export class Visualization {
         throw new Error("Abstract method 'update' can't be executed. Must be overridden in Subclass.");
     }
 
-    // folgende zwei Methoden in utility Klasse auslagern
+    // folgende zwei Methoden in utility Klasse auslagern oder die utility Klasse umgekehrt hier integrieren
 
     /**
      * Determines wheter black of white provides more contrast considering the containers color
