@@ -58,9 +58,7 @@ export class HistoryLineGraph extends HeartRateVisualization {
         this.line = null;
         this.path = null;
         this.startTime = null;
-        
-        this.timeInterval = 60000; // 1 minute in ms
-        
+                
         this.validateAndSetOptions(options);
         this.draw();
     }
