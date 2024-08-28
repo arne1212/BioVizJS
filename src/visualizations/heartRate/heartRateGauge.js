@@ -1,6 +1,7 @@
 import { HeartRateVisualization } from "./heartRateVisualization.js";
 import { isValidColor } from "../utility.js";
 import { noValidColorErrorMessage } from "../utility.js";
+import { findBackgroundColor } from "../utility.js";
 
 /**
  * Gauge to visualize heart rate values
@@ -71,7 +72,7 @@ export class HeartRateGauge extends HeartRateVisualization {
     draw() {
         // dynamic determination of colors to use for svg elements, depending on container color, for sufficient contrast
         const svgBaseColor = this.getSVGBaseColor();
-        const containerBackgroundColor = this.findBackgroundColor(this.container);
+        const containerBackgroundColor = findBackgroundColor(this.container);
         
         // define the gradient to use for the gauge
         // either a gradient definiton is provided by the client in the form [{color: "", deg: ""}, {color: "", deg: ""} ...]
