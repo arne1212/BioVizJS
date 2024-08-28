@@ -1,4 +1,4 @@
-![VitaSight_logo](https://github.com/user-attachments/assets/2c2ebf91-5df3-4200-b5da-ad4348766dc0)
+![VitaSight_logo](https://github.com/user-attachments/assets/10e6f62e-485f-4bc6-8245-7f29b01b1e03)
 
 [Introduction]
 
