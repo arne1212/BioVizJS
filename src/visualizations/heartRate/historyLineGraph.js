@@ -260,6 +260,7 @@ export class HistoryLineGraph extends HeartRateVisualization {
             if (isValidColor(options.referenceLineColor)) {
                 this.refLineColor = options.referenceLineColor;
             } else {
+                this.refLineColor = "red"; // default value
                 console.error(noValidColorErrorMessage(options.referenceLineColor));
             }
         } else {

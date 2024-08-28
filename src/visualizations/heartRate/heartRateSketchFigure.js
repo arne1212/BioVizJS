@@ -25,7 +25,6 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
 
         this.validateAndSetOptions(options);
         this.draw();
-        console.log("index" + this.referenceColorIndex)
     }
 
     validateAndSetOptions(options) {

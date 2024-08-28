@@ -8,6 +8,7 @@ import { noValidColorErrorMessage } from "../utility.js";
 export class PulsatingHeart extends HeartRateVisualization {
     constructor(containerId, options={}) {
         super(containerId, options);
+        console.log('is constructing');
         this.scaleFactor;
         this.heartColor;
         this.isAnimated;
