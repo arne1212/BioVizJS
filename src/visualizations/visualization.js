@@ -55,7 +55,7 @@ export class Visualization {
      * Determines wheter black of white provides more contrast considering the containers color
      * @returns black or white depending on what provides better contrast
      */
-    getSVGBaseColor() {
+    getContrastingBaseColor() {
         var backgroundColor = findBackgroundColor(this.container);
         var colorBrightness = getColorBrightness(backgroundColor);
         // bright colors will result in black being used for certain svg elements

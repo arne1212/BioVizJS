@@ -49,7 +49,7 @@ export class PulsatingHeart extends HeartRateVisualization {
     }
 
     draw() {
-        const svgBaseColor = this.getSVGBaseColor();
+        const svgBaseColor = this.getContrastingBaseColor();
         const viewBoxHeight = 32;
         /**
          * svg with a path enclosing the shape of a heart and below a value display

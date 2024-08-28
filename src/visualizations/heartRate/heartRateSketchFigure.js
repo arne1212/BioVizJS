@@ -69,7 +69,7 @@ export class HeartRateSketchFigure extends HeartRateVisualization {
 
     draw() {
         var y = this.maxY;
-        var svgBaseColor = this.getSVGBaseColor();
+        var svgBaseColor = this.getContrastingBaseColor();
         const svgCode = `
         <svg width="100%" height="100%" viewBox="128 75 36 109" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
