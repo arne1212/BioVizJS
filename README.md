@@ -217,6 +217,10 @@ https://github.com/user-attachments/assets/a900a0bf-ac2c-42c0-83fe-ea0c1e2048e3
 
 <br>
 
+If `null` is passed as the `id` of the container, `ScreenOverlay` is automatically assigned to a div that spans over the entire window size.
+
+<br>
+
 ```javascript
 const vis = new vitasight.ScreenOverlay("someElem", {
     color: "red",
